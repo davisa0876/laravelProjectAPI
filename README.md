@@ -68,4 +68,65 @@ WEATHER_API_URL=https://api.openweathermap.org/data/2.5
 WEATHER_API_KEY=your_api_key_here  # Get your API key from OpenWeatherMap
 ```
 
+> **Important**: To use the Weather API functionality:
+> 1. Sign up for a free account at [OpenWeatherMap](https://openweathermap.org/api)
+> 2. Generate your API key in your account dashboard
+> 3. Replace `your_api_key_here` in the `.env` file with your actual API key
+> 4. The free tier has a limit of 60 calls/minute
 >
+> Without a valid API key, the weather endpoints will not function correctly.
+
+5. Generate application key:
+```bash
+php artisan key:generate
+```
+
+6. Run database migrations:
+```bash
+php artisan migrate
+```
+
+7. Start the development server:
+```bash
+php artisan serve
+```
+
+The API will be available at `http://localhost:8000`
+
+## API Endpoints
+
+### Authentication
+- `POST /api/register` - Register new user
+- `POST /api/login` - User login
+- `POST /api/logout` - User logout
+- `GET /api/user` - Get authenticated user
+
+### Weather
+- `GET /api/weather` - Get weather data
+  - Query params: `city` (required)
+
+### Language
+- `POST /api/language` - Switch application language
+  - Body: `lang` (required, enum: 'en', 'es')
+
+## Testing
+
+Run the test suite:
+```bash
+php artisan test
+```
+
+Or with coverage report:
+```bash
+php artisan test --coverage
+```
+
+## Environment Variables
+
+Key environment variables:
+- `APP_ENV` - Application environment
+- `DB_*` - Database configuration
+- `WEATHER_API_*` - Weather API configuration
+- `APP_LOCALE` - Default application locale
+- `SANCTUM_STATEFUL_DOMAINS` - Allowed domains for Sanctum
+
