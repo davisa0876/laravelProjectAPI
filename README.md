@@ -1,6 +1,6 @@
 # Laravel API Project with Authentication and Weather Integration
 
-A Laravel-based REST API that provides authentication, user management, and weather data integration. This project serves as the backend for the Vue.js Admin Dashboard.
+A Laravel-based REST API that provides authentication, user management, weather data integration, and API monitoring. This project serves as the backend for the Vue.js Admin Dashboard.
 
 ## Features
 
@@ -8,7 +8,7 @@ A Laravel-based REST API that provides authentication, user management, and weat
   - Login
   - Registration
   - Password Management
-  - Token-based Authentication (Sanctum) 
+  - Token-based Authentication (Sanctum)
   - Secure Password Reset
 
 - 🌍 Multi-language Support
@@ -23,11 +23,11 @@ A Laravel-based REST API that provides authentication, user management, and weat
   - Error Handling
   - Response Caching
 
-- 🧪 Comprehensive Testing
-  - Authentication Tests
-  - Language Tests
-  - Weather API Tests
-  - PHPUnit Configuration
+- 📊 API Monitoring & Analytics
+  - Request/Response Logging
+  - Performance Metrics
+  - Error Tracking
+  - Usage Statistics
 
 ## Prerequisites
 
@@ -40,7 +40,7 @@ A Laravel-based REST API that provides authentication, user management, and weat
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/davisa0876/laravelProjectAPI.git
+git clone https://github.com/yourusername/your-repo.git
 cd orion-example
 ```
 
@@ -59,22 +59,22 @@ cp .env.example .env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=8080
-DB_DATABASE=contenthubDB
-DB_USERNAME=UserProjet
-DB_PASSWORD=contentUser1Laravel!23
+DB_DATABASE=your_database
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
 
 # Weather API Configuration
 WEATHER_API_URL=https://api.openweathermap.org/data/2.5
-WEATHER_API_KEY=your_api_key_here  # Get your API key from OpenWeatherMap
-```
+WEATHER_API_KEY=your_api_key_here
 
-> **Important**: To use the Weather API functionality:
-> 1. Sign up for a free account at [OpenWeatherMap](https://openweathermap.org/api)
-> 2. Generate your API key in your account dashboard
-> 3. Replace `your_api_key_here` in the `.env` file with your actual API key
-> 4. The free tier has a limit of 60 calls/minute
->
-> Without a valid API key, the weather endpoints will not function correctly.
+# Telescope Configuration
+TELESCOPE_ENABLED=true
+TELESCOPE_DRIVER=database
+
+# API Documentation
+L5_SWAGGER_GENERATE_ALWAYS=true
+L5_SWAGGER_UI_DOC_EXPANSION=list
+```
 
 5. Generate application key:
 ```bash
@@ -91,42 +91,119 @@ php artisan migrate
 php artisan serve
 ```
 
-The API will be available at `http://localhost:8000`
+## API Documentation
 
-## API Endpoints
+This project uses Swagger/OpenAPI for API documentation. You can access the documentation at:
 
-### Authentication
-- `POST /api/register` - Register new user
-- `POST /api/login` - User login
-- `POST /api/logout` - User logout
-- `GET /api/user` - Get authenticated user
+- 📚 Swagger UI: `http://localhost:8000/api/documentation`
+- 📄 JSON format: `http://localhost:8000/docs/api-docs.json`
 
-### Weather
-- `GET /api/weather` - Get weather data
-  - Query params: `city` (required)
+### Generating Documentation
 
-### Language
-- `POST /api/language` - Switch application language
-  - Body: `lang` (required, enum: 'en', 'es')
+The documentation is automatically generated when changes are made to the API annotations. To manually regenerate:
 
-## Testing
-
-Run the test suite:
 ```bash
-php artisan test
+php artisan l5-swagger:generate
 ```
 
-Or with coverage report:
+### Available Endpoints
+
+The documentation includes detailed information about:
+- Authentication endpoints (register, login, logout)
+- Weather data endpoints
+- Language switching
+- API monitoring and analytics
+- Crawler functionality
+
+Each endpoint includes:
+- Required parameters
+- Request/response examples
+- Authentication requirements
+- Possible error responses
+
+## API Monitoring with Telescope
+
+Laravel Telescope provides deep insights into your API's behavior and performance.
+
+### Accessing Telescope
+
+Visit `http://localhost:8000/telescope` to access the dashboard.
+
+### Available Monitors
+
+Telescope provides monitoring for:
+- 🔍 **Requests**: HTTP requests and responses
+- ⚠️ **Exceptions**: Application errors
+- 📝 **Logs**: Application logs
+- 🗃️ **Database**: Query monitoring
+- 📨 **Mail**: Email operations
+- 🔔 **Notifications**: System notifications
+- 🚀 **Jobs**: Queue processing
+- 📦 **Cache**: Cache operations
+- ⏰ **Schedule**: Task scheduling
+- 🔑 **Redis**: Redis operations
+
+### Telescope Data Management
+
+To prevent Telescope from using too much storage:
+
 ```bash
-php artisan test --coverage
+# Clear all entries
+php artisan telescope:clear
+
+# Prune old entries
+php artisan telescope:prune --hours=48
 ```
 
-## Environment Variables
+### Security
 
-Key environment variables:
-- `APP_ENV` - Application environment
-- `DB_*` - Database configuration
-- `WEATHER_API_*` - Weather API configuration
-- `APP_LOCALE` - Default application locale
-- `SANCTUM_STATEFUL_DOMAINS` - Allowed domains for Sanctum
+By default, Telescope is only accessible in the local environment. To modify access, update `app/Providers/TelescopeServiceProvider.php`:
+
+```php
+protected function gate()
+{
+    Gate::define('viewTelescope', function ($user) {
+        return in_array($user->email, [
+            'admin@example.com'
+        ]);
+    });
+}
+```
+
+## API Crawler
+
+The API includes a crawler that tracks all API requests and responses. The crawler logs:
+- Request method and URL
+- IP address and User Agent
+- Request headers and parameters
+- Response status code
+- Execution time
+- User ID (if authenticated)
+- Timestamp
+
+### Analyzing API Usage
+
+To analyze API usage, use the following command:
+```bash
+# Analyze last 24 hours
+php artisan api:analyze
+
+# Analyze last 7 days
+php artisan api:analyze --days=7
+```
+
+The analysis includes:
+- Endpoint usage count
+- Average response time
+- Error rates
+- Most active users
+- Peak usage times
+
+## Contributing
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 

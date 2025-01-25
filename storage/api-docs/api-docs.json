@@ -1,0 +1,673 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Laravel API Documentation",
+        "description": "API documentation for Laravel Project with Authentication and Weather Integration",
+        "contact": {
+            "email": "admin@example.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api",
+            "description": "Local API Server"
+        }
+    ],
+    "paths": {
+        "/crawler/analyze": {
+            "get": {
+                "tags": [
+                    "Crawler"
+                ],
+                "summary": "Analyze API usage statistics",
+                "description": "Retrieves statistics about API usage including endpoint calls, response times, and error rates",
+                "operationId": "67e79f7033e8cf71d5c7d71761f5efa6",
+                "parameters": [
+                    {
+                        "name": "days",
+                        "in": "query",
+                        "description": "Number of days to analyze",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Analysis results retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "endpoints": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "url": {
+                                                        "type": "string",
+                                                        "example": "/api/weather"
+                                                    },
+                                                    "calls": {
+                                                        "type": "integer",
+                                                        "example": 150
+                                                    },
+                                                    "avg_time": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 45.23
+                                                    },
+                                                    "error_rate": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 2.5
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "total_calls": {
+                                            "type": "integer",
+                                            "example": 450
+                                        },
+                                        "avg_response_time": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 38.67
+                                        },
+                                        "overall_error_rate": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 1.8
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Unauthorized - User doesn't have required permissions"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/crawler/logs": {
+            "get": {
+                "tags": [
+                    "Crawler"
+                ],
+                "summary": "Get raw API logs",
+                "description": "Retrieves raw API logs for detailed analysis",
+                "operationId": "51cd51876a234b9e2e26f7032d2b4e4c",
+                "parameters": [
+                    {
+                        "name": "days",
+                        "in": "query",
+                        "description": "Number of days of logs to retrieve",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "filter",
+                        "in": "query",
+                        "description": "Filter logs by URL pattern",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Logs retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "timestamp": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "method": {
+                                                "type": "string",
+                                                "example": "GET"
+                                            },
+                                            "url": {
+                                                "type": "string",
+                                                "example": "/api/weather"
+                                            },
+                                            "status": {
+                                                "type": "integer",
+                                                "example": 200
+                                            },
+                                            "duration": {
+                                                "type": "string",
+                                                "example": "45.23ms"
+                                            },
+                                            "ip": {
+                                                "type": "string",
+                                                "example": "127.0.0.1"
+                                            },
+                                            "user_id": {
+                                                "type": "string",
+                                                "example": "1"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/crawler/crawl": {
+            "post": {
+                "tags": [
+                    "Crawler"
+                ],
+                "summary": "Crawl a website",
+                "description": "Crawls a specified URL and returns the crawling results. Can perform either single-page or recursive crawling.",
+                "operationId": "826c95abebd5cd3104a50f3a3281fcc5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "url"
+                                ],
+                                "properties": {
+                                    "url": {
+                                        "description": "The base URL to crawl",
+                                        "type": "string",
+                                        "format": "uri",
+                                        "example": "https://example.com"
+                                    },
+                                    "singlePage": {
+                                        "description": "If true, only crawls the specified URL. If false, performs recursive crawling.",
+                                        "type": "boolean",
+                                        "example": false
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Crawling completed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "urls": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "url": {
+                                                        "type": "string",
+                                                        "example": "https://example.com/page1"
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "Page Title"
+                                                    },
+                                                    "status": {
+                                                        "type": "integer",
+                                                        "example": 200
+                                                    },
+                                                    "crawled_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-03-20T15:30:00Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "stats": {
+                                            "properties": {
+                                                "total_urls": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                },
+                                                "successful_crawls": {
+                                                    "type": "integer",
+                                                    "example": 23
+                                                },
+                                                "failed_crawls": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "crawl_time": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 5.23
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid URL format"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Error during crawling: Connection timeout"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/weather": {
+            "get": {
+                "tags": [
+                    "Weather"
+                ],
+                "summary": "Get weather information",
+                "description": "Retrieves current weather data for a specified city",
+                "operationId": "16ce6a2cd07502c9281452e655fc3866",
+                "parameters": [
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "City name",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "London"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Weather data retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "main": {
+                                            "properties": {
+                                                "temp": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 20.5
+                                                },
+                                                "feels_like": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 19.8
+                                                },
+                                                "temp_min": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 18.2
+                                                },
+                                                "temp_max": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 22.4
+                                                },
+                                                "pressure": {
+                                                    "type": "integer",
+                                                    "example": 1015
+                                                },
+                                                "humidity": {
+                                                    "type": "integer",
+                                                    "example": 75
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "weather": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 800
+                                                    },
+                                                    "main": {
+                                                        "type": "string",
+                                                        "example": "Clear"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "clear sky"
+                                                    },
+                                                    "icon": {
+                                                        "type": "string",
+                                                        "example": "01d"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register a new user",
+                "description": "Creates a new user account and returns access token",
+                "operationId": "0903f2e0df1a8857bee538fc055417f0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Registration completed successfully"
+                                        },
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1..."
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "bearer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User login",
+                "operationId": "2dd578ff7aba2721293dac66833b27d1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully logged in"
+                                        },
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1..."
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "bearer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        },
+        "/language": {
+            "post": {
+                "tags": [
+                    "Language"
+                ],
+                "summary": "Switch application language",
+                "description": "Changes the application language between supported locales",
+                "operationId": "655960e3b2845937d1b2d1d4c4e25dcb",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "lang"
+                                ],
+                                "properties": {
+                                    "lang": {
+                                        "type": "string",
+                                        "enum": [
+                                            "en",
+                                            "es"
+                                        ],
+                                        "example": "es"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Language switched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Language switched successfully"
+                                        },
+                                        "language": {
+                                            "type": "string",
+                                            "example": "es"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Crawler",
+            "description": "API Endpoints for analyzing API usage and logs"
+        },
+        {
+            "name": "Weather",
+            "description": "Weather"
+        },
+        {
+            "name": "Authentication",
+            "description": "Authentication"
+        },
+        {
+            "name": "Language",
+            "description": "Language"
+        }
+    ],
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ]
+}
